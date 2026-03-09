@@ -40,7 +40,8 @@ class MainActivity : ComponentActivity() {
                             val phone = textState.value.trim()
                             if (!validateText(phone)) return@FirstScreen
                             if (!phone.all { it.isDigit() }) {
-                                Toast.makeText(this, "Введите корректный номер", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this,
+                                    getString(R.string.enter_corrected_number), Toast.LENGTH_SHORT).show()
                                 return@FirstScreen
                             }
                             val intent = Intent(
@@ -66,7 +67,7 @@ class MainActivity : ComponentActivity() {
     }
     fun validateText(text: String): Boolean {
         if (text.isBlank()) {
-            Toast.makeText(this, "Введите текст", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.enter_ext), Toast.LENGTH_SHORT).show()
             return false
         }
         return true

@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">VkEducation</string>
     <string name="search...">Search</string>
+    <string name="enter_corrected_number">Введите корректный номер</string>
+    <string name="enter_ext">Введите текст</string>
+    <string name="first_activity">First Activity</string>
+    <string name="open_second_activity">Open second Activity</string>
+    <string name="call_a_friend">Call a friend</string>
+    <string name="share_text">Share text</string>
+    <string name="received_text">Полученный текст: %1$s</string>
 </resources>

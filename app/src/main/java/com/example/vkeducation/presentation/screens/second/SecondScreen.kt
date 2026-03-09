@@ -8,8 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.vkeducation.R
 
 @Composable
 fun SecondScreen(
@@ -23,7 +25,7 @@ fun SecondScreen(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Полученный текст: $text",
+            text = stringResource(R.string.received_text, text),
             fontSize = 20.sp
         )
     }

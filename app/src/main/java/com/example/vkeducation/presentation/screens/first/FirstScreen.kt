@@ -34,7 +34,7 @@ fun FirstScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Title(text = "First Activity")
+        Title(text = stringResource(R.string.first_activity))
 
         SearchBar(
             query = text,
@@ -102,21 +102,21 @@ private fun ViewCard(
             onClick = onClickOpenButton,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Open second Activity")
+            Text(stringResource(R.string.open_second_activity))
         }
 
         Button(
             onClick = onClickCallButton,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Call a friend")
+            Text(stringResource(R.string.call_a_friend))
         }
 
         Button(
             onClick = onClickShareButton,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Share text")
+            Text(stringResource(R.string.share_text))
         }
     }
 

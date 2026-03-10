@@ -1,11 +1,23 @@
 <resources>
     <string name="app_name">VkEducation</string>
-    <string name="search...">Search</string>
-    <string name="enter_corrected_number">Введите корректный номер</string>
-    <string name="enter_ext">Введите текст</string>
-    <string name="first_activity">First Activity</string>
-    <string name="open_second_activity">Open second Activity</string>
-    <string name="call_a_friend">Call a friend</string>
-    <string name="share_text">Share text</string>
-    <string name="received_text">Полученный текст: %1$s</string>
+    <string name="category_app">Приложения</string>
+    <string name="category_game">Игры</string>
+    <string name="category_fin">Финансы</string>
+    <string name="category_instum">Инструменты</string>
+    <string name="category_trancport">Транспорт</string>
+
+
+    <string name="app_details_age">Возраст</string>
+    <string name="app_details_size">Размер</string>
+
+    <string name="install">Установить</string>
+
+    <string name="app_details_screenshots">Скриншоты</string>
+
+    <string name="app_details_description">Описание приложения</string>
+    <string name="app_details_read_more">Читать подробнее</string>
+
+    <string name="app_details_developer">Разработчик</string>
+
+    <string name="under_developement">В процессе разработки</string>
 </resources>

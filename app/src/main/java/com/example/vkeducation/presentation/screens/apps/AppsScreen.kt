@@ -45,11 +45,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.vkeducation.domain.entity.App
 import com.example.vkeducation.presentation.AppIconMapper
 
 import coil3.compose.AsyncImage
+import com.example.vkeducation.di.DataModule
 import kotlinx.coroutines.flow.collectLatest
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -58,23 +61,33 @@ fun AppsScreen(
     modifier: Modifier = Modifier,
     onNavigateToMenu: () -> Unit,
     onAppClick: (App) -> Unit,
-    viewModel: AppsViewModel = viewModel()
 ) {
+
+    //это боль очень хочется Hilt
+    val viewModel: AppsViewModel = viewModel(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return AppsViewModel(DataModule.getAppsUseCase) as T
+            }
+        }
+    )
+
     val state by viewModel.state.collectAsState()
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
-                is AppsEvent.ShowSnackbar ->
-                    snackbarHostState.showSnackbar(event.message)
+                is AppsEvent.ShowSnackBar ->
+                    snackBarHostState.showSnackbar(event.message)
             }
         }
     }
     Scaffold(
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(hostState = snackBarHostState)
         }
     ) { paddingValues ->
         Column(

@@ -1,171 +1,146 @@
-package com.example.vkeducation.data
+package com.example.vkeducation.data.local
 
-import com.example.vkeducation.domain.entity.App
-import com.example.vkeducation.domain.entity.Category
+import com.example.vkeducation.data.remote.AppDto
 
-object MockApps {
-    val apps = listOf(
-        App(
+
+class LocalSourceImpl : LocalSource {
+
+    private val apps = listOf(
+        AppDto(
             id = 1,
             name = "СберБанк Онлайн - c Cалютом",
             developer = "Sber",
-            category = Category.FINANCE,
+            category = "FINANCE",
             ageRating = 12,
             size = 45.2f,
             iconUrl = "sber_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Больше чем банк",
         ),
-        App(
+        AppDto(
             id = 2,
             name = "Яндекс.Браузер",
             developer = "YandexDev",
-            category = Category.INSTRUMENTS,
+            category = "INSTRUMENTS",
             ageRating = 12,
             size = 72.5f,
             iconUrl = "yandex_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Быстрый и безопасный браузер",
         ),
-
-        App(
+        AppDto(
             id = 3,
             name = "Почта Mail.ru",
             developer = "VkGroup",
-            category = Category.INSTRUMENTS,
+            category = "INSTRUMENTS",
             ageRating = 4,
             size = 38.1f,
             iconUrl = "mail_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Почтовый клиент для любых ящиков",
         ),
-        App(
+        AppDto(
             id = 4,
             name = "Яндекс Навигатор",
             developer = "YandexDev",
-            category = Category.TRANCSPORT,
+            category = "TRANSPORT",
             ageRating = 4,
             size = 31.8f,
             iconUrl = "yandex_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Парковки и заправки - по пути",
-
         ),
-        App(
+        AppDto(
             id = 5,
             name = "Мой Мтс",
             developer = "MTSDev",
-            category = Category.INSTRUMENTS,
+            category = "INSTRUMENTS",
             ageRating = 3,
             size = 89.3f,
             iconUrl = "mts_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Мой МТС - центр экосистемы МТС",
-
-        ),App(
+        ),
+        AppDto(
             id = 6,
             name = "Яндекс - с Алисой",
             developer = "YandexDev",
-            category = Category.INSTRUMENTS,
+            category = "INSTRUMENTS",
             ageRating = 3,
             size = 89.3f,
             iconUrl = "yandex_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Яндекс - поиск всегда под рукой",
-
-            ),
-        App(
+        ),
+        AppDto(
             id = 7,
             name = "СберБанк Онлайн - c Cалютом",
             developer = "Sber",
-            category = Category.FINANCE,
+            category = "FINANCE",
             ageRating = 12,
             size = 45.2f,
             iconUrl = "sber_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Больше чем банк",
         ),
-        App(
+        AppDto(
             id = 8,
             name = "Яндекс.Браузер",
             developer = "Yandex dev",
-            category = Category.TRANCSPORT,
+            category = "TRANSPORT",
             ageRating = 12,
             size = 72.5f,
             iconUrl = "yandex_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Быстрый и безопасный браузер",
         ),
-
-        App(
+        AppDto(
             id = 9,
             name = "Почта Mail.ru",
             developer = "VkGroup",
-            category = Category.FINANCE,
+            category = "FINANCE",
             ageRating = 6,
             size = 38.1f,
             iconUrl = "mail_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Почтовый клиент для любых ящиков",
         ),
-        App(
+        AppDto(
             id = 10,
             name = "Яндекс Навигатор",
             developer = "YandexDev",
-            category = Category.INSTRUMENTS,
+            category = "INSTRUMENTS",
             ageRating = 4,
             size = 31.8f,
             iconUrl = "yandex_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Парковки и заправки - по пути",
-
-            ),
-        App(
+        ),
+        AppDto(
             id = 11,
             name = "Мой Мтс",
             developer = "MtsDev",
-            category = Category.FINANCE,
+            category = "FINANCE",
             ageRating = 3,
             size = 89.3f,
             iconUrl = "mts_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Мой МТС - центр экосистемы МТС",
-
-            ),App(
+        ),
+        AppDto(
             id = 12,
             name = "Яндекс - с Алисой",
             developer = "YandexDev",
-            category = Category.FINANCE,
+            category = "FINANCE",
             ageRating = 3,
             size = 89.3f,
             iconUrl = "yandex_icon",
-            screenshotUrlList = listOf(
-
-            ),
+            screenshotUrlList = emptyList(),
             description = "Яндекс - поиск всегда под рукой",
-
-            )
+        )
     )
+
+    override fun getApps(): List<AppDto> = apps
+
+    override fun getAppById(id: Int): AppDto? = apps.find { it.id == id }
 }

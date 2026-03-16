@@ -2,10 +2,12 @@ package com.example.vkeducation.presentation.navigation
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.vkeducation.presentation.screens.apps.AppsScreen
+import com.example.vkeducation.presentation.screens.content.AppDetailViewModel
 import com.example.vkeducation.presentation.screens.content.AppDetailsScreen
 
 
@@ -43,14 +45,12 @@ fun NavGraph(
     }
 }
 
-
 sealed class Screen(val route: String) {
     data object Apps : Screen("apps")
     data object AppDetail : Screen("apps/{id}") {
         fun createRoute(id: Int): String {
             return "apps/$id"
         }
-
         fun getAppId(arguments: Bundle?): Int {
             return arguments?.getString("id")?.toInt() ?: 0
         }

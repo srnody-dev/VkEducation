@@ -1,5 +1,6 @@
 package com.example.vkeducation.presentation.screens.apps
 
+import android.annotation.SuppressLint
 import com.example.vkeducation.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,11 +23,17 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,65 +45,86 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.vkeducation.data.MockApps
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.vkeducation.domain.entity.App
 import com.example.vkeducation.presentation.AppIconMapper
 
 import coil3.compose.AsyncImage
+import kotlinx.coroutines.flow.collectLatest
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AppsScreen(
     modifier: Modifier = Modifier,
     onNavigateToMenu: () -> Unit,
     onAppClick: (App) -> Unit,
+    viewModel: AppsViewModel = viewModel()
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primary),
-    ) {
-        AppTopBar(
-            onClickToMenu = onNavigateToMenu,
-            modifier = Modifier.background(MaterialTheme.colorScheme.primary)
-        )
+    val state by viewModel.state.collectAsState()
 
-        Surface(
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collectLatest { event ->
+            when (event) {
+                is AppsEvent.ShowSnackbar ->
+                    snackbarHostState.showSnackbar(event.message)
+            }
+        }
+    }
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
-            shape = RoundedCornerShape(
-                topStart = 24.dp,
-                topEnd = 24.dp
-            )
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primary)
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            AppTopBar(
+                onClickToMenu = onNavigateToMenu,
+                onLogoClick = viewModel::onLogoClick
+            )
+
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize(),
+                color = MaterialTheme.colorScheme.background,
+                shape = RoundedCornerShape(
+                    topStart = 24.dp,
+                    topEnd = 24.dp
+                )
             ) {
-                items(MockApps.apps) { app ->
-                    AppCard(
-                        app = app,
-                        onAppClick = onAppClick
-                    )
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    items(state.apps) { app ->
+                        AppCard(
+                            app = app,
+                            onAppClick = onAppClick
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppTopBar(
     modifier: Modifier = Modifier,
     onClickToMenu: () -> Unit,
+    onLogoClick: () -> Unit
 ) {
     TopAppBar(
         modifier = modifier,
         title = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.clickable { onLogoClick() }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.rustorelogo),
@@ -104,13 +132,13 @@ private fun AppTopBar(
                     contentDescription = "RuStore Logo",
                     modifier = Modifier
                         .size(40.dp)
-                       .padding(end = 8.dp)
+                        .padding(end = 8.dp)
                 )
 
                 Text(
+                    text = "RuStore",
                     fontSize = 26.sp,
                     fontWeight = FontWeight.SemiBold,
-                    text = "RuStore",
                     color = Color.White
                 )
             }

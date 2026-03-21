@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.vkeducation.R
 import com.example.vkeducation.domain.entity.App
 import com.example.vkeducation.domain.usecase.GetAppByIdUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -14,8 +15,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AppDetailViewModel(
+@HiltViewModel
+class AppDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getAppByIdUseCase: GetAppByIdUseCase
 ) : ViewModel() {

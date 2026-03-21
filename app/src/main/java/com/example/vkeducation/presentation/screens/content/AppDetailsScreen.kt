@@ -26,11 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.vkeducation.di.DataModule
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -38,19 +34,8 @@ fun AppDetailsScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     appId: Int,
+    viewModel: AppDetailViewModel = hiltViewModel()
 ) {
-
-    //это боль очень хочется Hilt
-    val viewModel: AppDetailViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return AppDetailViewModel(
-                    savedStateHandle = SavedStateHandle(mapOf("id" to appId)),
-                    getAppByIdUseCase = DataModule.getAppByIdUseCase
-                ) as T
-            }
-        }
-    )
 
     val state by viewModel.state.collectAsState()
 
@@ -68,10 +53,6 @@ fun AppDetailsScreen(
                 }
             }
         }
-    }
-
-    LaunchedEffect(appId) {
-        viewModel.loadApp(appId)
     }
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) }

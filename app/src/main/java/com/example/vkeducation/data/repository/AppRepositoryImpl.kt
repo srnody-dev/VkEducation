@@ -7,8 +7,9 @@ import com.example.vkeducation.domain.entity.App
 import com.example.vkeducation.domain.repository.AppRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class AppRepositoryImpl(
+class AppRepositoryImpl @Inject constructor(
     private val localSource: LocalSource
 ) : AppRepository {
 

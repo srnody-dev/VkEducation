@@ -11,7 +11,9 @@ import com.example.vkeducation.presentation.navigation.NavGraph
 import com.example.vkeducation.presentation.screens.apps.AppsScreen
 import com.example.vkeducation.ui.theme.VkEducationTheme
 import com.example.vkeducation.presentation.screens.content.AppDetailsScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

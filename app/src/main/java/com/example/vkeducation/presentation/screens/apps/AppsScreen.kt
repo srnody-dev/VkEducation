@@ -45,15 +45,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.vkeducation.domain.entity.App
 import com.example.vkeducation.presentation.AppIconMapper
-
 import coil3.compose.AsyncImage
-import com.example.vkeducation.di.DataModule
 import kotlinx.coroutines.flow.collectLatest
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -61,17 +58,9 @@ fun AppsScreen(
     modifier: Modifier = Modifier,
     onNavigateToMenu: () -> Unit,
     onAppClick: (App) -> Unit,
+    viewModel: AppsViewModel = hiltViewModel()
 ) {
 
-    //это боль очень хочется Hilt
-    val viewModel: AppsViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                return AppsViewModel(DataModule.getAppsUseCase) as T
-            }
-        }
-    )
 
     val state by viewModel.state.collectAsState()
 

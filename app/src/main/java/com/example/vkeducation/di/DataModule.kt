@@ -1,13 +1,18 @@
 package com.example.vkeducation.di
 
-import com.example.vkeducation.data.local.LocalSource
-import com.example.vkeducation.data.local.LocalSourceImpl
+import com.example.vkeducation.data.remote.AppsApiService
 import com.example.vkeducation.data.repository.AppRepositoryImpl
 import com.example.vkeducation.domain.repository.AppRepository
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.Converter
+import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -18,7 +23,41 @@ interface DataModule {
     @Singleton
     fun bindsRepository(repositoryImpl: AppRepositoryImpl): AppRepository
 
-    @Binds
-    @Singleton
-    fun bindsLocalSource(localImpl: LocalSourceImpl): LocalSource
+    companion object {
+        @Provides
+        @Singleton
+        fun providesApiService(
+            retrofit: Retrofit
+        ): AppsApiService {
+            return retrofit.create(AppsApiService::class.java)
+        }
+
+        @Provides
+        @Singleton
+        fun provideJson(): Json {
+            return Json {
+                ignoreUnknownKeys = true
+                coerceInputValues = true
+            }
+        }
+
+        @Provides
+        @Singleton
+        fun provideConverterFactory(
+            json: Json
+        ): Converter.Factory {
+            return json.asConverterFactory("application/json".toMediaType())
+        }
+
+        @Provides
+        @Singleton
+        fun provideRetrofit(
+            converterFactory: Converter.Factory
+        ): Retrofit {
+            return Retrofit.Builder()
+                .baseUrl("http://185.103.109.134/")
+                .addConverterFactory(converterFactory)
+                .build()
+        }
+    }
 }

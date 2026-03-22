@@ -1,9 +1,10 @@
 package com.example.vkeducation.presentation.screens.apps
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vkeducation.domain.entity.App
-import com.example.vkeducation.domain.usecase.GetAppsUseCase
+import com.example.vkeducation.domain.usecase.LoadAppsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppsViewModel @Inject constructor(
-    private val getAppsUseCase: GetAppsUseCase
+    private val loadAppsUseCase: LoadAppsUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(AppsState())
     val state = _state.asStateFlow()
@@ -25,15 +26,20 @@ class AppsViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     init {
-        getAppDetail()
+        loadApps()
     }
 
-    private fun getAppDetail() {
-        getAppsUseCase()
-            .onEach { apps ->
-                _state.value = _state.value.copy(apps = apps)
+    private fun loadApps() {
+        viewModelScope.launch {
+            try {
+                loadAppsUseCase().collect { apps ->
+                    _state.value = _state.value.copy(apps = apps)
+                }
             }
-            .launchIn(viewModelScope)
+            catch (e: Exception){
+                Log.e("AppsViewModel", "Error: ${e.message}")
+            }
+        }
     }
 
     fun onLogoClick() {

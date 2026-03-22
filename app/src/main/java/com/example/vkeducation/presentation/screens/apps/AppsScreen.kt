@@ -47,8 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.vkeducation.domain.entity.App
-import com.example.vkeducation.presentation.AppIconMapper
 import coil3.compose.AsyncImage
+import com.example.vkeducation.presentation.utils.toCategoryText
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -184,15 +184,11 @@ private fun AppCard(
 
         ) {
 
-        val iconResId = remember(app.iconUrl) {
-            AppIconMapper.mapToIconResId(app.iconUrl)
-        }
-
         AsyncImage(
             modifier = Modifier
                 .size(80.dp)
                 .clip(RoundedCornerShape(8.dp)),
-            model = iconResId,
+            model = app.iconUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
@@ -225,10 +221,11 @@ private fun AppCard(
                 fontWeight = FontWeight.Light,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                text = app.category.toString().lowercase().replaceFirstChar { it.uppercase() }
+                text = app.category.toCategoryText()
             )
 
         }
     }
+
 
 }

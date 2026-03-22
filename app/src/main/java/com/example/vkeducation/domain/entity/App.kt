@@ -1,7 +1,7 @@
 package com.example.vkeducation.domain.entity
 
 data class App(
-    val id:Int,
+    val id: String,
     val name: String,
     val developer: String,
     val category: Category,

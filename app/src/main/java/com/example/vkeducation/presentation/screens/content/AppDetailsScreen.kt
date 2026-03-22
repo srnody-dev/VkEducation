@@ -21,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 fun AppDetailsScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    appId: Int,
+    appId: String,
     viewModel: AppDetailViewModel = hiltViewModel()
 ) {
 
@@ -44,12 +45,18 @@ fun AppDetailsScreen(
     var descriptionCollapsed by remember { mutableStateOf(true) }
     val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
+    val currentContext by rememberUpdatedState(context)
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
                 is AppDetailEvent.ShowSnackBar -> {
-                    snackBarHostState.showSnackbar(context.getString(event.resId))
+                    try {
+                        val message = currentContext.getString(event.resId)
+                        snackBarHostState.showSnackbar(message)
+                    } catch (e: Exception) {
+                        snackBarHostState.showSnackbar("Unknown error")
+                    }
                 }
             }
         }

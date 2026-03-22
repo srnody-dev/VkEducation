@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vkeducation.R
 import com.example.vkeducation.domain.entity.App
-import com.example.vkeducation.domain.entity.Category
+import com.example.vkeducation.presentation.utils.toCategoryText
 import kotlin.math.roundToInt
 
 @Composable
@@ -47,7 +47,7 @@ fun AppDetailsHeader(
         Spacer(Modifier.width(16.dp))
         Column {
             Text(
-                text = getCategoryText(app.category),
+                text = app.category.toCategoryText(),
                 color = MaterialTheme.colorScheme.secondary,
                 fontSize = 12.sp,
             )
@@ -84,12 +84,4 @@ fun AppDetailsHeader(
     }
 }
 
-@Composable
-private fun getCategoryText(category: Category): String = when (category) {
-    Category.APP -> stringResource(R.string.category_app)
-    Category.GAME -> stringResource(R.string.category_game)
-    Category.FINANCE -> stringResource(R.string.category_fin)
-    Category.INSTRUMENTS -> stringResource(R.string.category_instum)
-    Category.TRANSPORT -> stringResource(R.string.category_trancport)
-}
 

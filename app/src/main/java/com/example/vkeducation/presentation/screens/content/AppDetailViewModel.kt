@@ -55,6 +55,7 @@ class AppDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _event.emit(AppDetailEvent.ShowSnackBar(R.string.under_developement))
         }
+
     }
 
     fun onDeveloperClick() {

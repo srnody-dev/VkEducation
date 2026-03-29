@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.example.vkeducation.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,8 +19,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,18 +51,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.example.vkeducation.domain.entity.App
+import com.example.vkeducation.domain.entity.AppShort
 import coil3.compose.AsyncImage
 import com.example.vkeducation.presentation.utils.toCategoryText
 import kotlinx.coroutines.flow.collectLatest
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AppsScreen(
     modifier: Modifier = Modifier,
     onNavigateToMenu: () -> Unit,
-    onAppClick: (App) -> Unit,
+    onAppClick: (AppShort) -> Unit,
     viewModel: AppsViewModel = hiltViewModel()
 ) {
 
@@ -65,6 +71,13 @@ fun AppsScreen(
     val state by viewModel.state.collectAsState()
 
     val snackBarHostState = remember { SnackbarHostState() }
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = { viewModel.refreshApps() }
+    )
+
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
@@ -98,16 +111,28 @@ fun AppsScreen(
                     topEnd = 24.dp
                 )
             ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                Box(
+                    modifier = Modifier
+                        .pullRefresh(pullRefreshState)
+                        .fillMaxSize()
                 ) {
-                    items(state.apps) { app ->
-                        AppCard(
-                            app = app,
-                            onAppClick = onAppClick
-                        )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    ) {
+                        items(state.appShorts) { app ->
+                            AppCard(
+                                appShort = app,
+                                onAppClick = onAppClick
+                            )
+                        }
                     }
+
+                    PullRefreshIndicator(
+                        refreshing = isRefreshing,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
                 }
             }
         }
@@ -170,15 +195,15 @@ private fun AppTopBar(
 @Composable
 private fun AppCard(
     modifier: Modifier = Modifier,
-    app: App,
-    onAppClick: (App) -> Unit,
+    appShort: AppShort,
+    onAppClick: (AppShort) -> Unit,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 100.dp)
             .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = { onAppClick(app) })
+            .clickable(onClick = { onAppClick(appShort) })
             .background(color = MaterialTheme.colorScheme.surface)
             .padding(8.dp),
 
@@ -188,7 +213,7 @@ private fun AppCard(
             modifier = Modifier
                 .size(80.dp)
                 .clip(RoundedCornerShape(8.dp)),
-            model = app.iconUrl,
+            model = appShort.iconUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
@@ -201,7 +226,7 @@ private fun AppCard(
         ) {
             Text(
                 fontSize = 18.sp,
-                text = app.name,
+                text = appShort.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold,
@@ -213,7 +238,7 @@ private fun AppCard(
                 fontWeight = FontWeight.Normal,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                text = app.description
+                text = appShort.description
             )
             Text(
                 fontSize = 14.sp,
@@ -221,7 +246,7 @@ private fun AppCard(
                 fontWeight = FontWeight.Light,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                text = app.category.toCategoryText()
+                text = appShort.category.toCategoryText()
             )
 
         }

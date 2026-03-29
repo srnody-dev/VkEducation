@@ -1,5 +1,9 @@
 package com.example.vkeducation.di
 
+import android.content.Context
+import androidx.room.Room
+import com.example.vkeducation.data.local.AppsDao
+import com.example.vkeducation.data.local.AppsDatabase
 import com.example.vkeducation.data.remote.AppsApiService
 import com.example.vkeducation.data.repository.AppRepositoryImpl
 import com.example.vkeducation.domain.repository.AppRepository
@@ -7,6 +11,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -24,6 +29,23 @@ interface DataModule {
     fun bindsRepository(repositoryImpl: AppRepositoryImpl): AppRepository
 
     companion object {
+
+        @Provides
+        @Singleton
+        fun providesAppsDatabase(@ApplicationContext context: Context): AppsDatabase {
+            return Room.databaseBuilder(
+                context = context,
+                klass = AppsDatabase::class.java,
+                name = "appShorts.db"
+            ).fallbackToDestructiveMigration(dropAllTables = true).build()
+        }
+
+        @Provides
+        @Singleton
+        fun providesNewsDao(database: AppsDatabase): AppsDao {
+            return database.appsDao()
+        }
+
         @Provides
         @Singleton
         fun providesApiService(

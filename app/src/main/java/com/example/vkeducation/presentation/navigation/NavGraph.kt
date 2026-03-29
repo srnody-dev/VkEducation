@@ -50,10 +50,10 @@ fun NavGraph(
 }
 
 sealed class Screen(val route: String) {
-    data object Apps : Screen("apps")
-    data object AppDetail : Screen("apps/{id}") {
+    data object Apps : Screen("appShorts")
+    data object AppDetail : Screen("appShorts/{id}") {
         fun createRoute(id: String): String {
-            return "apps/$id"
+            return "appShorts/$id"
         }
         fun getAppId(arguments: Bundle?): String {
             return arguments?.getString("id") ?: ""

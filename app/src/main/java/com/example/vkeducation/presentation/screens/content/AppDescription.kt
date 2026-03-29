@@ -28,10 +28,10 @@ fun AppDescription(
         Spacer(Modifier.height(8.dp))
         Text(
             text = description,
-            maxLines = if (collapsed) Int.MAX_VALUE else 1,
+            maxLines = if (collapsed) 3 else  Int.MAX_VALUE,
             overflow = TextOverflow.Ellipsis,
         )
-        if (!collapsed) {
+        if (collapsed) {
             TextButton(
                 onClick = onReadMoreClick,
                 contentPadding = PaddingValues(horizontal = 0.dp)

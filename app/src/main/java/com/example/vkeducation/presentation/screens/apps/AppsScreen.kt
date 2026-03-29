@@ -45,7 +45,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -69,21 +71,24 @@ fun AppsScreen(
 
 
     val state by viewModel.state.collectAsState()
-
+    val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
-        onRefresh = { viewModel.refreshApps() }
+        onRefresh = { viewModel.processCommand(AppsCommand.RefreshApps) }
     )
 
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
-                is AppsEvent.ShowSnackBar ->
+                is AppsCommand.ShowSnackBar -> {
                     snackBarHostState.showSnackbar(event.message)
+                }
+
+                AppsCommand.RefreshApps -> {}
             }
         }
     }

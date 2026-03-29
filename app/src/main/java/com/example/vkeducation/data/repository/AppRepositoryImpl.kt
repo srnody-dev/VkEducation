@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -127,6 +128,22 @@ class AppRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to load apps from API", e)
+        }
+    }
+
+    override fun observeAppDetails(id: String): Flow<AppDetails?> {
+        return appsDao.getAppDetailsById(id)
+            .map { entity -> entity?.toAppDetailsDomain() }
+    }
+
+    override suspend fun toggleWishlist(id: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                appsDao.toggleWishlistStatus(id)
+                Log.d(TAG, "Wishlist toggled for $id")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error toggling wishlist for $id", e)
+            }
         }
     }
 

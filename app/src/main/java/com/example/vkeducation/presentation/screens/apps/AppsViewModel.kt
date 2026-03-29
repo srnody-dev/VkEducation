@@ -22,7 +22,7 @@ class AppsViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(AppsState())
     val state = _state.asStateFlow()
-    private val _event = MutableSharedFlow<AppsEvent>()
+    private val _event = MutableSharedFlow<AppsCommand>()
     val event = _event.asSharedFlow()
 
     private val _isRefreshing = MutableStateFlow(false)
@@ -54,10 +54,20 @@ class AppsViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun onLogoClick() {
         viewModelScope.launch {
-            _event.emit(AppsEvent.ShowSnackBar("Snack Rustore"))
+            _event.emit(AppsCommand.ShowSnackBar("Snack Rustore"))
+        }
+    }
+
+    fun processCommand(command: AppsCommand) {
+        when (command) {
+            AppsCommand.RefreshApps -> {
+                refreshApps()
+            }
+
+            is AppsCommand.ShowSnackBar -> {}
         }
     }
 }
@@ -66,6 +76,8 @@ data class AppsState(
     val appShorts: List<AppShort> = emptyList()
 )
 
-sealed class AppsEvent {
-    data class ShowSnackBar(val message: String) : AppsEvent()
+sealed interface AppsCommand {
+    data class ShowSnackBar(val message: String) : AppsCommand
+
+    data object RefreshApps : AppsCommand
 }

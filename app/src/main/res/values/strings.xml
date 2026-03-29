@@ -20,6 +20,9 @@
     <string name="app_details_developer">Разработчик</string>
 
     <string name="under_developement">В процессе разработки</string>
+    <string name="error_loading_details">Ошибка загрузки деталей приложения</string>
+    <string name="error_toggling_wishlist">Ошибка при добавлении в избранное</string>
+
     <string name="productivity">Производительность</string>
     <string name="app">Приложения</string>
     <string name="game">Игры</string>
@@ -40,4 +43,5 @@
     <string name="food">Еда</string>
     <string name="utils">Утилиты</string>
     <string name="shopping">Шопинг</string>
+    <string name="apps_update">Приложения обновлены</string>
 </resources>

@@ -10,4 +10,8 @@ interface AppRepository {
     suspend fun getAppDetailsById(id: String): AppDetails?
 
     suspend fun refreshApps()
+
+    suspend fun toggleWishlist(id: String)
+
+    fun observeAppDetails(id: String): Flow<AppDetails?>
 }

@@ -31,4 +31,7 @@ interface AppsDao {
     @Query("DELETE FROM appShorts")
     suspend fun deleteAllApps()
 
+    @Query("UPDATE appDetails SET isInWishlist = NOT isInWishlist WHERE id = :id")
+    suspend fun toggleWishlistStatus(id: String)
+
 }

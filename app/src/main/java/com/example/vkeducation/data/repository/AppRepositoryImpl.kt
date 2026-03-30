@@ -133,7 +133,15 @@ class AppRepositoryImpl @Inject constructor(
 
     override fun observeAppDetails(id: String): Flow<AppDetails?> {
         return appsDao.getAppDetailsById(id)
-            .map { entity -> entity?.toAppDetailsDomain() }
+            .map { entity ->
+                if (entity != null) {
+                    Log.d(TAG, "observeAppDetails: App details for $id found in cache")
+                    entity.toAppDetailsDomain()
+                } else {
+                    Log.d(TAG, "observeAppDetails: App details for $id not in cache")
+                    null
+                }
+            }
     }
 
     override suspend fun toggleWishlist(id: String) {

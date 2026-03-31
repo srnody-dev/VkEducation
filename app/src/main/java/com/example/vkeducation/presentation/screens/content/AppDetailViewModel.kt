@@ -10,6 +10,7 @@ import com.example.vkeducation.domain.entity.AppDetails
 import com.example.vkeducation.domain.repository.AppRepository
 import com.example.vkeducation.domain.usecase.GetAppDetailsByIdUseCase
 import com.example.vkeducation.domain.usecase.ToggleWishlistUseCase
+import com.example.vkeducation.presentation.navigation.Screen
 import com.example.vkeducation.presentation.screens.content.AppDetailCommand.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,56 +30,69 @@ class AppDetailViewModel @Inject constructor(
     private val repository: AppRepository
 ) : ViewModel() {
 
-    private val appId: String = savedStateHandle["id"] ?: ""
+    private val appId: String? = savedStateHandle[Screen.AppDetail.ARG_ID]
     private val _state = MutableStateFlow<AppDetailState>(AppDetailState.Initial)
     val state = _state.asStateFlow()
     private val _event = MutableSharedFlow<AppDetailCommand>()
     val event = _event.asSharedFlow()
 
     init {
-        viewModelScope.launch {
-            repository.observeAppDetails(appId)
-                .catch { e ->
-                    Log.e("AppDetailViewModel", "Error observing", e)
-                    _state.value = AppDetailState.Details(appDetails = null)
-                    _event.emit(AppDetailCommand.ShowSnackBar(R.string.error_loading_details))
-                }
-                .collect { appDetails ->
-                    if (appDetails != null) {
-                        val currentCollapsed = (_state.value as? AppDetailState.Details)?.descriptionCollapsed ?: true
-                        _state.value = AppDetailState.Details(
-                            appDetails = appDetails,
-                            descriptionCollapsed = currentCollapsed
-                        )
-                    } else if (_state.value is AppDetailState.Initial) {
-                        loadAppDetails()
+        if (appId == null) {
+            _state.value = AppDetailState.Error("Error in appId")
+        } else startObserve()
+    }
+
+    private fun startObserve() {
+        appId?.let {
+            viewModelScope.launch {
+                repository.observeAppDetails(appId)
+                    .catch { e ->
+                        Log.e("AppDetailViewModel", "Error observing", e)
+                        _state.value = AppDetailState.Details(appDetails = null)
+                        _event.emit(AppDetailCommand.ShowSnackBar(R.string.error_loading_details))
                     }
-                }
+                    .collect { appDetails ->
+                        if (appDetails != null) {
+                            val currentCollapsed =
+                                (_state.value as? AppDetailState.Details)?.descriptionCollapsed
+                                    ?: true
+                            _state.value = AppDetailState.Details(
+                                appDetails = appDetails,
+                                descriptionCollapsed = currentCollapsed
+                            )
+                        } else if (_state.value is AppDetailState.Initial) {
+                            loadAppDetails()
+                        }
+                    }
+            }
         }
     }
 
     private fun loadAppDetails() {
-        viewModelScope.launch {
-            try {
-                val appDetails = getAppDetailsByIdUseCase(appId)
-                if (appDetails != null) {
-                    _state.value = AppDetailState.Details(
-                        appDetails = appDetails,
-                        descriptionCollapsed = true
-                    )
+        appId?.let {
+            viewModelScope.launch {
+                try {
+                    val appDetails = getAppDetailsByIdUseCase(appId)
+                    if (appDetails != null) {
+                        _state.value = AppDetailState.Details(
+                            appDetails = appDetails,
+                            descriptionCollapsed = true
+                        )
+                    }
+                } catch (e: Exception) {
+                    Log.e("AppDetailViewModel", "Error loading: ${e.message}")
+                    _event.emit(AppDetailCommand.ShowSnackBar(R.string.error_loading_details))
                 }
-            } catch (e: Exception) {
-                Log.e("AppDetailViewModel", "Error loading: ${e.message}")
-                _event.emit(AppDetailCommand.ShowSnackBar(R.string.error_loading_details))
             }
         }
     }
 
-    fun processCommand(command: AppDetailCommand){
-        when(command){
+    fun processCommand(command: AppDetailCommand) {
+        when (command) {
             Back -> {
                 _state.update { AppDetailState.Finished }
             }
+
             is ShowSnackBar -> {
                 viewModelScope.launch {
                     _event.emit(command)
@@ -90,11 +104,13 @@ class AppDetailViewModel @Inject constructor(
                     _event.emit(ShowSnackBar(R.string.under_developement))
                 }
             }
+
             Share -> {
                 viewModelScope.launch {
                     _event.emit(ShowSnackBar(R.string.under_developement))
                 }
             }
+
             DeveloperClick -> {
                 viewModelScope.launch {
                     _event.emit(ShowSnackBar(R.string.under_developement))
@@ -105,8 +121,7 @@ class AppDetailViewModel @Inject constructor(
                 viewModelScope.launch {
                     try {
                         toggleWishlistUseCase(command.id)
-                    }
-                    catch (e: Exception){
+                    } catch (e: Exception) {
                         Log.e("AppDetailViewModel", "Error toggling wishlist", e)
                         _event.emit(ShowSnackBar(R.string.error_toggling_wishlist))
                     }
@@ -133,7 +148,9 @@ sealed interface AppDetailState {
 
     data object Initial : AppDetailState
 
-    data object Finished: AppDetailState
+    data object Finished : AppDetailState
+
+    data class Error(val message: String) : AppDetailState
 
 
 }
@@ -144,11 +161,11 @@ sealed interface AppDetailCommand {
 
     data object Back : AppDetailCommand
 
-    data object Install:AppDetailCommand
+    data object Install : AppDetailCommand
 
-    data object Share :AppDetailCommand
+    data object Share : AppDetailCommand
 
-    data object DeveloperClick:AppDetailCommand
+    data object DeveloperClick : AppDetailCommand
 
     data object ToggleDescription : AppDetailCommand
 }

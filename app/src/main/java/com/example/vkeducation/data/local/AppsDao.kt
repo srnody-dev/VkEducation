@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 
@@ -33,5 +34,11 @@ interface AppsDao {
 
     @Query("UPDATE appDetails SET isInWishlist = NOT isInWishlist WHERE id = :id")
     suspend fun toggleWishlistStatus(id: String)
+
+    @Transaction
+    suspend fun refreshApps(apps: List<AppShortDbModel>){
+        deleteAllApps()
+        addApps(apps)
+    }
 
 }

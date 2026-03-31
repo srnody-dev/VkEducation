@@ -37,12 +37,10 @@ fun NavGraph(
             }
             )
         ) {
-            val appId = Screen.AppDetail.getAppId(it.arguments)
             AppDetailsScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                appId = appId
             )
         }
 
@@ -52,11 +50,14 @@ fun NavGraph(
 sealed class Screen(val route: String) {
     data object Apps : Screen("appShorts")
     data object AppDetail : Screen("appShorts/{id}") {
+
+        const val ARG_ID = "id"
         fun createRoute(id: String): String {
             return "appShorts/$id"
         }
-        fun getAppId(arguments: Bundle?): String {
-            return arguments?.getString("id") ?: ""
+
+        fun getAppId(arguments: Bundle?): String? {
+            return arguments?.getString(ARG_ID)?.takeIf { it.isNotBlank() }
         }
 
     }

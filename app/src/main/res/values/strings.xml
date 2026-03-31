@@ -44,4 +44,6 @@
     <string name="utils">Утилиты</string>
     <string name="shopping">Шопинг</string>
     <string name="apps_update">Приложения обновлены</string>
+    <string name="snack_rustore">Snack Rustore</string>
+    <string name="error_update">Ошибка обновления: %1$s</string>
 </resources>

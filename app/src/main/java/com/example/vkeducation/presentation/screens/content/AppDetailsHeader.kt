@@ -1,6 +1,6 @@
 package com.example.vkeducation.presentation.screens.content
 
-
+import coil3.compose.AsyncImage
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -38,7 +38,7 @@ fun AppDetailsHeader(
     ) {
         AsyncImage(
             model = app.iconUrl,
-            contentDescription = null,
+            contentDescription = app.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(128.dp)
@@ -82,16 +82,6 @@ fun AppDetailsHeader(
             }
         }
     }
-}
-
-@Composable
-fun AsyncImage(
-    model: String,
-    contentDescription: Nothing?,
-    contentScale: ContentScale,
-    modifier: Modifier
-) {
-
 }
 
 @Composable

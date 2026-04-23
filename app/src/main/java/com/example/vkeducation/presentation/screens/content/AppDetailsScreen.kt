@@ -33,7 +33,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 fun AppDetailsScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    appId: Int,
     viewModel: AppDetailViewModel = hiltViewModel()
 ) {
 

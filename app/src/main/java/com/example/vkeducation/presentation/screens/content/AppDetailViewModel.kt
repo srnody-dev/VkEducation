@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,31 +24,38 @@ class AppDetailViewModel @Inject constructor(
     private val getAppByIdUseCase: GetAppByIdUseCase
 ) : ViewModel() {
 
-    private val appId: Int = savedStateHandle["id"] ?: 0
+    private val appId: Int? = savedStateHandle["id"]
     private val _state = MutableStateFlow(AppDetailState())
     val state = _state.asStateFlow()
     private val _event = MutableSharedFlow<AppDetailEvent>()
     val event = _event.asSharedFlow()
 
     init {
-        loadApp(appId)
+        if (appId != null) {
+            loadApp(appId)
+        } else
+            viewModelScope.launch { _event.emit(AppDetailEvent.ShowSnackBar((R.string.error_navigation))) }
     }
+
     fun loadApp(appId: Int) {
         getAppByIdUseCase(appId).onEach { app ->
-            _state.value = _state.value.copy(app = app)
+            _state.update { it.copy(app = app) }
         }
             .launchIn(viewModelScope)
     }
+
     fun onShareClick() {
         viewModelScope.launch {
             _event.emit(AppDetailEvent.ShowSnackBar(R.string.under_developement))
         }
     }
+
     fun onInstallClick() {
         viewModelScope.launch {
             _event.emit(AppDetailEvent.ShowSnackBar(R.string.under_developement))
         }
     }
+
     fun onDeveloperClick() {
         viewModelScope.launch {
             _event.emit(AppDetailEvent.ShowSnackBar(R.string.under_developement))

@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.vkeducation.presentation.screens.apps.AppsScreen
-import com.example.vkeducation.presentation.screens.content.AppDetailViewModel
 import com.example.vkeducation.presentation.screens.content.AppDetailsScreen
 
 
@@ -55,6 +54,7 @@ sealed class Screen(val route: String) {
         fun createRoute(id: Int): String {
             return "apps/$id"
         }
+
         fun getAppId(arguments: Bundle?): Int {
             return arguments?.getString("id")?.toInt() ?: 0
         }

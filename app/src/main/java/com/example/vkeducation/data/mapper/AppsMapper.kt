@@ -20,17 +20,17 @@ fun AppDto.toDomain(): App {
         )
     } catch (e: Exception) {
         Log.e("Mapper", "Error converting to DB model: ${e.message}")
-         App(
-             id = -1,
-             name = "",
-             developer = "",
-             category = Category.APP,
-             ageRating = 0,
-             size = 0f,
-             iconUrl = "",
-             screenshotUrlList = emptyList(),
-             description = ""
-         )
+        App(
+            id = -1,
+            name = "",
+            developer = "",
+            category = Category.APP,
+            ageRating = 0,
+            size = 0f,
+            iconUrl = "",
+            screenshotUrlList = emptyList(),
+            description = ""
+        )
     }
 }
 
@@ -39,12 +39,7 @@ fun List<AppDto>.toDomain(): List<App> {
 }
 
 private fun toCategory(category: String): Category {
-    return when (category.uppercase()) {
-        "APP" -> Category.APP
-        "GAME" -> Category.GAME
-        "FINANCE" -> Category.FINANCE
-        "INSTRUMENTS" -> Category.INSTRUMENTS
-        "TRANSPORT" -> Category.TRANSPORT
-        else -> Category.APP
-    }
+    return Category.entries.firstOrNull {
+        it.name == category.uppercase()
+    } ?: Category.APP
 }

@@ -43,7 +43,6 @@ fun NavGraph(
     }
 }
 
-
 sealed class Screen(val route: String) {
     data object Apps : Screen("apps")
     data object AppDetail : Screen("apps/{id}") {

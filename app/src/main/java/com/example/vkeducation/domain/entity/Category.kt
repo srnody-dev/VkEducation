@@ -5,5 +5,5 @@ enum class Category {
     GAME,
     FINANCE,
     INSTRUMENTS,
-    TRANCSPORT
+    TRANSPORT
 }

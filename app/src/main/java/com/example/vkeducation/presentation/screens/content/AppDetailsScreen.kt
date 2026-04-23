@@ -40,7 +40,7 @@ fun AppDetailsScreen(
     appId: Int,
 ) {
 
-    //это боль очень хочется Hilt
+    //в будущем переход на hilt
     val viewModel: AppDetailViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

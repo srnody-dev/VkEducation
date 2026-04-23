@@ -1,9 +1,10 @@
 package com.example.vkeducation.data.local
 
 import com.example.vkeducation.data.remote.AppDto
+import javax.inject.Inject
 
 
-class LocalSourceImpl : LocalSource {
+class LocalSourceImpl @Inject constructor() : LocalSource {
 
     private val apps = listOf(
         AppDto(

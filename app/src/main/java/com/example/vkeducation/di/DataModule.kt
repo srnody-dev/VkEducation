@@ -1,15 +1,24 @@
 package com.example.vkeducation.di
 
+import com.example.vkeducation.data.local.LocalSource
 import com.example.vkeducation.data.local.LocalSourceImpl
 import com.example.vkeducation.data.repository.AppRepositoryImpl
 import com.example.vkeducation.domain.repository.AppRepository
-import com.example.vkeducation.domain.usecase.GetAppByIdUseCase
-import com.example.vkeducation.domain.usecase.GetAppsUseCase
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-object DataModule {
-    private val localSource = LocalSourceImpl()
-    private val appRepository: AppRepository = AppRepositoryImpl(localSource)
+@Module
+@InstallIn(SingletonComponent::class)
+interface DataModule {
 
-    val getAppsUseCase: GetAppsUseCase = GetAppsUseCase(appRepository)
-    val getAppByIdUseCase: GetAppByIdUseCase = GetAppByIdUseCase(appRepository)
+    @Binds
+    @Singleton
+    fun bindsRepository(repositoryImpl: AppRepositoryImpl): AppRepository
+
+    @Binds
+    @Singleton
+    fun bindsLocalSource(localImpl: LocalSourceImpl): LocalSource
 }

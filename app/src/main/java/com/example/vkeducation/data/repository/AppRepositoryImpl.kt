@@ -8,9 +8,9 @@ import com.example.vkeducation.domain.repository.AppRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlin.coroutines.cancellation.CancellationException
+import javax.inject.Inject
 
-class AppRepositoryImpl(
+class AppRepositoryImpl @Inject constructor(
     private val localSource: LocalSource
 ) : AppRepository {
 

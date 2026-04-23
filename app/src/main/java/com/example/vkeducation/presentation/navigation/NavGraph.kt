@@ -2,9 +2,12 @@ package com.example.vkeducation.presentation.navigation
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.vkeducation.presentation.screens.apps.AppsScreen
 import com.example.vkeducation.presentation.screens.content.AppDetailsScreen
 
@@ -29,14 +32,16 @@ fun NavGraph(
         }
 
         composable(
-            route = Screen.AppDetail.route
+            route = Screen.AppDetail.route,
+            arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            }
+            )
         ) {
-            val appId = Screen.AppDetail.getAppId(it.arguments)
             AppDetailsScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                appId = appId
             )
         }
 

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,13 +32,13 @@ class AppsViewModel @Inject constructor(
 
     private fun loadApps() {
         viewModelScope.launch {
-            try {
-                loadAppsUseCase().collect { apps ->
-                    _state.value = _state.value.copy(apps = apps)
-                }
-            }
-            catch (e: Exception){
+            loadAppsUseCase().catch { e ->
                 Log.e("AppsViewModel", "Error: ${e.message}")
+                _state.value = _state.value.copy(apps = emptyList())
+            }.collect { apps ->
+                _state.value = _state.value.copy(apps = apps)
+
+
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.example.vkeducation.presentation.screens.content
 
 import android.util.Log
+import android.util.Log.e
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,13 +37,14 @@ class AppDetailViewModel @Inject constructor(
 
     fun loadAppById(appId: String) {
         viewModelScope.launch {
-            try {
-                loadAppByIdUseCase(appId).collect { app ->
+            loadAppByIdUseCase(appId)
+                .catch { e ->
+                    Log.e("AppDetailViewModel", "Error: ${e.message}")
+                    _state.value = _state.value.copy(app = null)
+                }
+                .collect{ app ->
                     _state.value = _state.value.copy(app = app)
                 }
-            } catch (e: Exception) {
-                Log.e("AppDetailViewModel", "Error: ${e.message}")
-            }
         }
     }
 

@@ -1,47 +1,51 @@
 package com.example.vkeducation.presentation.screens.content
 
+import android.util.Log
+import android.util.Log.e
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vkeducation.R
 import com.example.vkeducation.domain.entity.App
-import com.example.vkeducation.domain.usecase.GetAppByIdUseCase
+import com.example.vkeducation.domain.usecase.LoadAppByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AppDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getAppByIdUseCase: GetAppByIdUseCase
+    private val loadAppByIdUseCase: LoadAppByIdUseCase
 ) : ViewModel() {
 
-    private val appId: Int? = savedStateHandle["id"]
+    private val appId: String = savedStateHandle["id"] ?: ""
     private val _state = MutableStateFlow(AppDetailState())
     val state = _state.asStateFlow()
     private val _event = MutableSharedFlow<AppDetailEvent>()
     val event = _event.asSharedFlow()
 
     init {
-        if (appId != null) {
-            loadApp(appId)
-        } else
-            viewModelScope.launch { _event.emit(AppDetailEvent.ShowSnackBar((R.string.error_navigation))) }
+        loadAppById(appId)
     }
 
-    fun loadApp(appId: Int) {
-        getAppByIdUseCase(appId).onEach { app ->
-            _state.update { it.copy(app = app) }
+    fun loadAppById(appId: String) {
+        viewModelScope.launch {
+            loadAppByIdUseCase(appId)
+                .catch { e ->
+                    Log.e("AppDetailViewModel", "Error: ${e.message}")
+                    _state.value = _state.value.copy(app = null)
+                }
+                .collect{ app ->
+                    _state.value = _state.value.copy(app = app)
+                }
         }
-            .launchIn(viewModelScope)
     }
 
     fun onShareClick() {

@@ -4,6 +4,6 @@ import com.example.vkeducation.domain.entity.App
 import kotlinx.coroutines.flow.Flow
 
 interface AppRepository {
-    fun getApps(): Flow<List<App>>
-    fun getAppById(id: Int): Flow<App?>
+    fun loadApps(): Flow<List<App>>
+    fun loadAppById(id: String): Flow<App?>
 }

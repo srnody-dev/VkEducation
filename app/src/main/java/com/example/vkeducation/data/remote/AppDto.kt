@@ -1,14 +1,35 @@
 package com.example.vkeducation.data.remote
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class AppDto (
-    val id:Int,
+
+@Serializable
+data class AppDto(
+    @SerialName("id")
+    val id: String,
+
+    @SerialName("name")
     val name: String,
-    val developer: String,
+
+    @SerialName("developer")
+    val developer: String? = null,
+
+    @SerialName("category")
     val category: String,
-    val ageRating: Int,
-    val size: Float,
+
+    @SerialName("ageRating")
+    val ageRating: Int? = null,
+
+    @SerialName("size")
+    val size: Float? = null,
+
+    @SerialName("iconUrl")
     val iconUrl: String,
-    val screenshotUrlList: List<String>,
-    val description: String,
+
+    @SerialName("screenshotUrlList")
+    val screenshotUrlList: List<String>? = null,
+
+    @SerialName("description")
+    val description: String = "",
 )

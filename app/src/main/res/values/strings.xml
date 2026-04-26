@@ -20,5 +20,24 @@
     <string name="app_details_developer">Разработчик</string>
 
     <string name="under_developement">В процессе разработки</string>
-    <string name="error_navigation">Ошибка навигации</string>
+    <string name="productivity">Производительность</string>
+    <string name="app">Приложения</string>
+    <string name="game">Игры</string>
+    <string name="social">Образ жизни</string>
+    <string name="education">Образование</string>
+    <string name="entertaiment">Развлечения</string>
+    <string name="music">Музыка</string>
+    <string name="video">Видео</string>
+    <string name="photo">Фото и видео</string>
+    <string name="health">Здоровье и фитнес</string>
+    <string name="sports">Спорт</string>
+    <string name="news">Новости</string>
+    <string name="books">Книги</string>
+    <string name="business">Бизнес</string>
+    <string name="finance">Финансы</string>
+    <string name="travel">Путешествия</string>
+    <string name="maps">Навигация</string>
+    <string name="food">Еда</string>
+    <string name="utils">Утилиты</string>
+    <string name="shopping">Шопинг</string>
 </resources>

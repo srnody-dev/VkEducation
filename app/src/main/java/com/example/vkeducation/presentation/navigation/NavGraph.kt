@@ -37,12 +37,10 @@ fun NavGraph(
             }
             )
         ) {
-            val appId = Screen.AppDetail.getAppId(it.arguments)
             AppDetailsScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                appId = appId
             )
         }
 

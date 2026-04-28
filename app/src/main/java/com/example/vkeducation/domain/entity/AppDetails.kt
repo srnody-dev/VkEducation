@@ -1,6 +1,6 @@
 package com.example.vkeducation.domain.entity
 
-data class App(
+data class AppDetails(
     val id: String,
     val name: String,
     val developer: String,
@@ -9,5 +9,5 @@ data class App(
     val size: Float,
     val iconUrl: String,
     val screenshotUrlList: List<String>,
-    val description: String,
+    val description: String
 )

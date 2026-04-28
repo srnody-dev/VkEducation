@@ -7,8 +7,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vkeducation.R
-import com.example.vkeducation.domain.entity.App
-import com.example.vkeducation.domain.usecase.LoadAppByIdUseCase
+import com.example.vkeducation.domain.entity.AppDetails
+import com.example.vkeducation.domain.usecase.GetAppDetailsByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AppDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val loadAppByIdUseCase: LoadAppByIdUseCase
+    private val getAppDetailsByIdUseCase: GetAppDetailsByIdUseCase
 ) : ViewModel() {
 
     private val appId: String = savedStateHandle["id"] ?: ""
@@ -32,19 +32,19 @@ class AppDetailViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     init {
-        loadAppById(appId)
+        getAppDetailsById()
     }
 
-    fun loadAppById(appId: String) {
+    fun getAppDetailsById() {
         viewModelScope.launch {
-            loadAppByIdUseCase(appId)
-                .catch { e ->
-                    Log.e("AppDetailViewModel", "Error: ${e.message}")
-                    _state.value = _state.value.copy(app = null)
-                }
-                .collect{ app ->
-                    _state.value = _state.value.copy(app = app)
-                }
+            try {
+                val appDetails = getAppDetailsByIdUseCase(appId)
+
+                _state.value = _state.value.copy(appDetails = appDetails)
+
+            } catch (e: Exception) {
+                Log.e("AppDetailViewModel", "Error loadind app details: ${e.message}")
+            }
         }
     }
 
@@ -58,6 +58,7 @@ class AppDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _event.emit(AppDetailEvent.ShowSnackBar(R.string.under_developement))
         }
+
     }
 
     fun onDeveloperClick() {
@@ -68,7 +69,7 @@ class AppDetailViewModel @Inject constructor(
 }
 
 data class AppDetailState(
-    val app: App? = null
+    val appDetails: AppDetails? = null
 )
 
 sealed class AppDetailEvent {

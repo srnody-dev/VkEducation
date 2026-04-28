@@ -1,15 +1,28 @@
 package com.example.vkeducation.data.mapper
 
 import android.util.Log
+import com.example.vkeducation.data.local.AppDetailsDbModel
+import com.example.vkeducation.data.local.AppShortDbModel
 import com.example.vkeducation.data.remote.AppDto
-import com.example.vkeducation.domain.entity.App
+import com.example.vkeducation.domain.entity.AppDetails
+import com.example.vkeducation.domain.entity.AppShort
 import com.example.vkeducation.domain.entity.Category
 
-fun AppDto.toDomain(): App {
-    return App(
+fun AppDto.toAppShort(): AppShort {
+    return AppShort(
         id = id,
         name = name,
-        developer = developer ?: "Unknown Developer",
+        iconUrl = iconUrl,
+        category = toCategory(category),
+        description = description
+    )
+}
+
+fun AppDto.toAppDetails(): AppDetails {
+    return AppDetails(
+        id = id,
+        name = name,
+        developer = developer ?: "Unknown",
         category = toCategory(category),
         ageRating = ageRating ?: 0,
         size = size ?: 0f,
@@ -19,9 +32,54 @@ fun AppDto.toDomain(): App {
     )
 }
 
-fun List<AppDto>.toDomain(): List<App> {
-    return map { it.toDomain() }
+fun AppDto.toAppShortDb(): AppShortDbModel {
+    return AppShortDbModel(
+        id = id,
+        name = name,
+        iconUrl = iconUrl,
+        category = toCategory(category),
+        description = description
+    )
 }
+
+fun AppDto.toAppDetailsDb(): AppDetailsDbModel {
+    return AppDetailsDbModel(
+        id = id,
+        name = name,
+        developer = developer ?: "Unknown",
+        category = toCategory(category),
+        ageRating = ageRating ?: 0,
+        size = size ?: 0f,
+        iconUrl = iconUrl,
+        screenshotUrlList = screenshotUrlList ?: emptyList(),
+        description = description
+    )
+}
+
+fun AppShortDbModel.toAppDomain(): AppShort {
+    return AppShort(
+        id = id,
+        name = name,
+        iconUrl = iconUrl,
+        category = category,
+        description = description
+    )
+}
+
+fun AppDetailsDbModel.toAppDetailsDomain(): AppDetails {
+    return AppDetails(
+        id = id,
+        name = name,
+        developer = developer ?: "Unknown",
+        category = category,
+        ageRating = ageRating ?: 0,
+        size = size ?: 0f,
+        iconUrl = iconUrl,
+        screenshotUrlList = screenshotUrlList ?: emptyList(),
+        description = description
+    )
+}
+
 
 private fun toCategory(category: String): Category {
     return when (category) {

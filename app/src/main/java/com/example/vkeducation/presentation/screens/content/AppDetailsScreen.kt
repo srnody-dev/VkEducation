@@ -40,7 +40,7 @@ fun AppDetailsScreen(
 
     val state by viewModel.state.collectAsState()
 
-    val app = state.app
+    val app = state.appDetails
 
     var descriptionCollapsed by remember { mutableStateOf(true) }
     val context = LocalContext.current
@@ -87,7 +87,7 @@ fun AppDetailsScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 AppDetailsHeader(
-                    app = app,
+                    appDetails = app,
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
                 Spacer(Modifier.height(16.dp))

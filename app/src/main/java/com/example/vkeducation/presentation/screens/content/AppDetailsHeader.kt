@@ -23,13 +23,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vkeducation.R
-import com.example.vkeducation.domain.entity.App
+import com.example.vkeducation.domain.entity.AppDetails
+import com.example.vkeducation.domain.entity.AppShort
 import com.example.vkeducation.presentation.utils.toCategoryText
 import kotlin.math.roundToInt
 
 @Composable
 fun AppDetailsHeader(
-    app: App,
+    appDetails: AppDetails,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -37,8 +38,8 @@ fun AppDetailsHeader(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
-            model = app.iconUrl,
-            contentDescription = app.name,
+            model = appDetails.iconUrl,
+            contentDescription = appDetails.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(128.dp)
@@ -47,26 +48,26 @@ fun AppDetailsHeader(
         Spacer(Modifier.width(16.dp))
         Column {
             Text(
-                text = app.category.toCategoryText(),
+                text = appDetails.category.toCategoryText(),
                 color = MaterialTheme.colorScheme.secondary,
                 fontSize = 12.sp,
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = app.name,
+                text = appDetails.name,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineSmall,
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = app.developer,
+                text = appDetails.developer,
                 fontSize = 12.sp,
             )
             Spacer(Modifier.height(4.dp))
             Row {
                 Column(Modifier.width(IntrinsicSize.Max)) {
                     Text(
-                        text = "${app.ageRating}+",
+                        text = "${appDetails.ageRating}+",
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -75,7 +76,7 @@ fun AppDetailsHeader(
                 }
                 Spacer(Modifier.width(12.dp))
                 Column {
-                    Text(text = "${app.size.roundToInt()} MB")
+                    Text(text = "${appDetails.size.roundToInt()} MB")
                     Spacer(Modifier.height(4.dp))
                     Text(text = stringResource(R.string.app_details_size))
                 }

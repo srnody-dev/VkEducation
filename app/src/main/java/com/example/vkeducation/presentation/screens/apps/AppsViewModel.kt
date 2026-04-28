@@ -3,36 +3,42 @@ package com.example.vkeducation.presentation.screens.apps
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.vkeducation.domain.entity.App
-import com.example.vkeducation.domain.usecase.LoadAppsUseCase
+import com.example.vkeducation.domain.entity.AppShort
+import com.example.vkeducation.domain.usecase.GetAppsUseCase
+import com.example.vkeducation.domain.usecase.RefreshAppsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
 class AppsViewModel @Inject constructor(
-    private val loadAppsUseCase: LoadAppsUseCase
+    private val getAppsUseCase: GetAppsUseCase,
+    private val refreshAppsUseCase: RefreshAppsUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(AppsState())
     val state = _state.asStateFlow()
     private val _event = MutableSharedFlow<AppsEvent>()
     val event = _event.asSharedFlow()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+
     init {
-        loadApps()
+        getApps()
     }
 
-    private fun loadApps() {
+    private fun getApps() {
         viewModelScope.launch {
-            loadAppsUseCase().catch { e ->
+            try {
+                getAppsUseCase().collect { apps ->
+                    _state.value = _state.value.copy(appShorts = apps)
+                }
+            } catch (e: Exception) {
                 Log.e("AppsViewModel", "Error: ${e.message}")
                 _state.value = _state.value.copy(apps = emptyList())
             }.collect { apps ->
@@ -43,6 +49,17 @@ class AppsViewModel @Inject constructor(
         }
     }
 
+    fun refreshApps() {
+        viewModelScope.launch {
+            try {
+                refreshAppsUseCase.invoke()
+            } catch (e: Exception) {
+                Log.e("AppsViewModel", "Error refresh: ${e.message}")
+
+            }
+        }
+    }
+    
     fun onLogoClick() {
         viewModelScope.launch {
             _event.emit(AppsEvent.ShowSnackBar("Snack Rustore"))
@@ -51,7 +68,7 @@ class AppsViewModel @Inject constructor(
 }
 
 data class AppsState(
-    val apps: List<App> = emptyList()
+    val appShorts: List<AppShort> = emptyList()
 )
 
 sealed class AppsEvent {

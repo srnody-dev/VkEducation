@@ -40,6 +40,11 @@ class AppsViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("AppsViewModel", "Error: ${e.message}")
+                _state.value = _state.value.copy(apps = emptyList())
+            }.collect { apps ->
+                _state.value = _state.value.copy(apps = apps)
+
+
             }
         }
     }

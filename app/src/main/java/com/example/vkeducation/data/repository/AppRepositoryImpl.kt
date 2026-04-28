@@ -26,7 +26,7 @@ class AppRepositoryImpl @Inject constructor(
 
     companion object {
         private const val TAG = "AppRepository"
-        private const val CACHE = 5 * 60 * 1000
+        private const val EXPIRE_TIME = 5 * 60 * 1000
     }
 
 
@@ -96,7 +96,7 @@ class AppRepositoryImpl @Inject constructor(
 
             if (lastUpdateTime != null) {
                 val timePassed = System.currentTimeMillis() - lastUpdateTime
-                if (timePassed > CACHE) {
+                if (timePassed > EXPIRE_TIME) {
                     Log.d(
                         TAG,
                         "Cache outdated (${timePassed / 1000 / 60} minutes old), need update"

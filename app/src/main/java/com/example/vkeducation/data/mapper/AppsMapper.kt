@@ -28,7 +28,8 @@ fun AppDto.toAppDetails(): AppDetails {
         size = size ?: 0f,
         iconUrl = iconUrl,
         screenshotUrlList = screenshotUrlList ?: emptyList(),
-        description = description
+        description = description,
+        isInWishlist = false
     )
 }
 
@@ -52,7 +53,8 @@ fun AppDto.toAppDetailsDb(): AppDetailsDbModel {
         size = size ?: 0f,
         iconUrl = iconUrl,
         screenshotUrlList = screenshotUrlList ?: emptyList(),
-        description = description
+        description = description,
+        isInWishlist = false
     )
 }
 
@@ -76,7 +78,8 @@ fun AppDetailsDbModel.toAppDetailsDomain(): AppDetails {
         size = size ?: 0f,
         iconUrl = iconUrl,
         screenshotUrlList = screenshotUrlList ?: emptyList(),
-        description = description
+        description = description,
+        isInWishlist = isInWishlist
     )
 }
 

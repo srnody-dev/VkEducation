@@ -40,11 +40,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,27 +68,28 @@ fun AppsScreen(
     onAppClick: (AppShort) -> Unit,
     viewModel: AppsViewModel = hiltViewModel()
 ) {
-
-
     val state by viewModel.state.collectAsState()
-
+    val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
     val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val currentContext by rememberUpdatedState(context)
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
-        onRefresh = { viewModel.refreshApps() }
+        onRefresh = { viewModel.processCommand(AppsCommand.RefreshApps) }
     )
-
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
-                is AppsEvent.ShowSnackBar ->
-                    snackBarHostState.showSnackbar(event.message)
+                is AppsEvent.ShowSnackBar -> {
+                    val message = currentContext.getString(event.message)
+                    snackBarHostState.showSnackbar(message)
+                }
             }
         }
     }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState)
@@ -116,24 +119,57 @@ fun AppsScreen(
                         .pullRefresh(pullRefreshState)
                         .fillMaxSize()
                 ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    ) {
-                        items(state.appShorts) { app ->
-                            AppCard(
-                                appShort = app,
-                                onAppClick = onAppClick
+                    when (val currentState = state) {
+                        is AppsState.Error -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = (state as AppsState.Error).message,
+                                    color = Color.Red,
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
+
+                        AppsState.Initial -> {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            ) {
+                                items(emptyList<AppShort>()) {}
+                            }
+
+                            PullRefreshIndicator(
+                                refreshing = isRefreshing,
+                                state = pullRefreshState,
+                                modifier = Modifier.align(Alignment.TopCenter)
+                            )
+                        }
+
+                        is AppsState.Success -> {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            ) {
+                                items(currentState.appShorts) { app ->
+                                    AppCard(
+                                        appShort = app,
+                                        onAppClick = onAppClick
+                                    )
+                                }
+                            }
+
+                            PullRefreshIndicator(
+                                refreshing = isRefreshing,
+                                state = pullRefreshState,
+                                modifier = Modifier.align(Alignment.TopCenter)
                             )
                         }
                     }
-
-                    PullRefreshIndicator(
-                        refreshing = isRefreshing,
-                        state = pullRefreshState,
-                        modifier = Modifier.align(Alignment.TopCenter)
-                    )
                 }
+
             }
         }
     }

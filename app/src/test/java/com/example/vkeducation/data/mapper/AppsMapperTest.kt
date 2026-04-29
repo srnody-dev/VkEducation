@@ -11,61 +11,21 @@ import org.junit.jupiter.params.provider.CsvSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class AppsMapperTest {
-    private fun createTestAppDto(
-        id: String = "1",
-        name: String = "Test App",
-        iconUrl: String = "iconUrl",
-        category: String = "Игры",
-        description: String = "Test description",
-        developer: String? = "Test Developer",
-        ageRating: Int? = 12,
-        size: Float? = 50f,
-        screenshotUrlList: List<String>? = listOf("scr1.png")
-    ) = AppDto(
-        id = id,
-        name = name,
-        iconUrl = iconUrl,
-        category = category,
-        description = description,
-        developer = developer,
-        ageRating = ageRating,
-        size = size,
-        screenshotUrlList = screenshotUrlList
-    )
 
-    private fun createTestAppDetailsDbModel(
-        id: String = "1",
-        name: String = "Test App",
-        developer: String = "Test Developer",
-        category: Category = Category.APP,
-        ageRating: Int = 12,
-        size: Float = 50f,
-        iconUrl: String = "url",
-        screenshotUrlList: List<String> = listOf("scr1.png"),
-        description: String = "desc",
-        isInWishlist: Boolean = false
-    ) = AppDetailsDbModel(
-        id = id,
-        name = name,
-        developer = developer,
-        category = category,
-        ageRating = ageRating,
-        size = size,
-        iconUrl = iconUrl,
-        screenshotUrlList = screenshotUrlList,
-        description = description,
-        isInWishlist = isInWishlist
-    )
+class AppsMapperTest {
 
     @Test
     fun `toAppShort when valid DTO EXPECT maps correctly`() {
-        val dto = createTestAppDto(
+        val dto = AppDto(
             id = "1",
             name = "Test App",
             iconUrl = "iconUrl",
             category = "Игры",
-            description = "Test description"
+            description = "Test description",
+            developer = "Test Developer",
+            ageRating = 12,
+            size = 50f,
+            screenshotUrlList = listOf("scr1.png")
         )
 
         val result = dto.toAppShort()
@@ -79,19 +39,22 @@ class AppsMapperTest {
 
     @Test
     fun `toAppShort when unknown category EXPECT maps to APP`() {
-        val dto = createTestAppDto(
-            category = "Unknown Category"
+        val dto = AppDto(
+            id = "1",
+            name = "Test",
+            iconUrl = "url",
+            category = "Unknown Category",
+            description = "desc"
         )
 
         val result = dto.toAppShort()
-
         assertEquals(Category.APP, result.category)
     }
 
 
     @Test
     fun `toAppDetails when all fields present EXPECT maps correctly`() {
-        val dto = createTestAppDto(
+        val dto = AppDto(
             id = "1",
             name = "Test App",
             iconUrl = "iconUrl",
@@ -117,7 +80,12 @@ class AppsMapperTest {
 
     @Test
     fun `toAppDetails when null fields EXPECT uses default values`() {
-        val dto = createTestAppDto(
+        val dto = AppDto(
+            id = "1",
+            name = "Test App",
+            iconUrl = "iconUrl",
+            category = "Игры",
+            description = "Test description",
             developer = null,
             ageRating = null,
             size = null,
@@ -135,7 +103,7 @@ class AppsMapperTest {
 
     @Test
     fun `toAppShortDb EXPECT maps to AppShortDbModel correctly`() {
-        val dto = createTestAppDto(
+        val dto = AppDto(
             id = "1",
             name = "DB App",
             iconUrl = "iconUrl",
@@ -154,7 +122,7 @@ class AppsMapperTest {
 
     @Test
     fun `toAppDetailsDb EXPECT maps to AppDetailsDbModel correctly`() {
-        val dto = createTestAppDto(
+        val dto = AppDto(
             id = "1",
             name = "Details DB App",
             iconUrl = "url",
@@ -200,8 +168,17 @@ class AppsMapperTest {
 
     @Test
     fun `toAppDetailsDomain when isInWishlist true EXPECT preserves wishlist status`() {
-        val dbModel = createTestAppDetailsDbModel(
-            isInWishlist = true
+        val dbModel = AppDetailsDbModel(
+            id = "1",
+            name = "Test App",
+            developer = "Unknown",
+            category = Category.APP,
+            ageRating = 0,
+            size = 0f,
+            iconUrl = "url",
+            description = "Test description",
+            isInWishlist = true,
+            screenshotUrlList = emptyList(),
         )
 
         val result = dbModel.toAppDetailsDomain()
@@ -211,8 +188,16 @@ class AppsMapperTest {
 
     @Test
     fun `toAppDetailsDomain when screenshotUrlList is empty EXPECT returns empty list`() {
-        val dbModel = createTestAppDetailsDbModel(
-            screenshotUrlList = emptyList()
+        val dbModel = AppDetailsDbModel(
+            id = "1",
+            name = "Test App",
+            developer = "Developer",
+            category = Category.APP,
+            ageRating = 0,
+            size = 0f,
+            iconUrl = "url",
+            screenshotUrlList = emptyList(),
+            description = "Test description"
         )
 
         val result = dbModel.toAppDetailsDomain()
@@ -222,7 +207,7 @@ class AppsMapperTest {
 
     @Test
     fun `toAppDetailsDomain when all fields have values EXPECT preserves all values`() {
-        val dbModel = createTestAppDetailsDbModel(
+        val dbModel = AppDetailsDbModel(
             id = "1",
             name = "Test App",
             developer = "Test Developer",
@@ -269,7 +254,13 @@ class AppsMapperTest {
         "Утилиты, UTILITIES"
     )
     fun `toCategory when known category EXPECT maps correctly`(input: String, expected: String) {
-        val dto = createTestAppDto(category = input)
+        val dto = AppDto(
+            id = "1",
+            name = "Test App",
+            iconUrl = "iconUrl",
+            category = input,
+            description = "Test description"
+        )
         val result = dto.toAppShort()
         assertEquals(Category.valueOf(expected), result.category)
     }

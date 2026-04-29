@@ -33,13 +33,16 @@ class AppDetailViewModel @Inject constructor(
     private val appId: String? = savedStateHandle[Screen.AppDetail.ARG_ID]
     private val _state = MutableStateFlow<AppDetailState>(AppDetailState.Initial)
     val state = _state.asStateFlow()
-    private val _event = MutableSharedFlow<AppDetailCommand>()
+    private val _event = MutableSharedFlow<AppDetailEvent>()
     val event = _event.asSharedFlow()
 
     init {
         if (appId == null) {
             _state.value = AppDetailState.Error("Error in appId")
-        } else startObserve()
+        } else {
+            loadAppDetails()
+            startObserve()
+        }
     }
 
     private fun startObserve() {
@@ -48,8 +51,8 @@ class AppDetailViewModel @Inject constructor(
                 repository.observeAppDetails(appId)
                     .catch { e ->
                         Log.e("AppDetailViewModel", "Error observing", e)
-                        _state.value = AppDetailState.Details(appDetails = null)
-                        _event.emit(AppDetailCommand.ShowSnackBar(R.string.error_loading_details))
+                        _state.value = AppDetailState.Error(e.message ?: "Unknown error")
+                        _event.emit(AppDetailEvent.ShowSnackBar(R.string.error_loading_details))
                     }
                     .collect { appDetails ->
                         if (appDetails != null) {
@@ -60,8 +63,6 @@ class AppDetailViewModel @Inject constructor(
                                 appDetails = appDetails,
                                 descriptionCollapsed = currentCollapsed
                             )
-                        } else if (_state.value is AppDetailState.Initial) {
-                            loadAppDetails()
                         }
                     }
             }
@@ -81,7 +82,8 @@ class AppDetailViewModel @Inject constructor(
                     }
                 } catch (e: Exception) {
                     Log.e("AppDetailViewModel", "Error loading: ${e.message}")
-                    _event.emit(AppDetailCommand.ShowSnackBar(R.string.error_loading_details))
+                    _state.value = AppDetailState.Error(e.message ?: "Unknown error")
+                    _event.emit(AppDetailEvent.ShowSnackBar(R.string.error_loading_details))
                 }
             }
         }
@@ -90,30 +92,24 @@ class AppDetailViewModel @Inject constructor(
     fun processCommand(command: AppDetailCommand) {
         when (command) {
             Back -> {
-                _state.update { AppDetailState.Finished }
-            }
-
-            is ShowSnackBar -> {
-                viewModelScope.launch {
-                    _event.emit(command)
-                }
+                _event.tryEmit(AppDetailEvent.Finished)
             }
 
             Install -> {
                 viewModelScope.launch {
-                    _event.emit(ShowSnackBar(R.string.under_developement))
+                    _event.emit(AppDetailEvent.ShowSnackBar(R.string.under_developement))
                 }
             }
 
             Share -> {
                 viewModelScope.launch {
-                    _event.emit(ShowSnackBar(R.string.under_developement))
+                    _event.emit(AppDetailEvent.ShowSnackBar(R.string.under_developement))
                 }
             }
 
             DeveloperClick -> {
                 viewModelScope.launch {
-                    _event.emit(ShowSnackBar(R.string.under_developement))
+                    _event.emit(AppDetailEvent.ShowSnackBar(R.string.under_developement))
                 }
             }
 
@@ -123,7 +119,7 @@ class AppDetailViewModel @Inject constructor(
                         toggleWishlistUseCase(command.id)
                     } catch (e: Exception) {
                         Log.e("AppDetailViewModel", "Error toggling wishlist", e)
-                        _event.emit(ShowSnackBar(R.string.error_toggling_wishlist))
+                        _event.emit(AppDetailEvent.ShowSnackBar(R.string.error_toggling_wishlist))
                     }
                 }
             }
@@ -147,16 +143,10 @@ sealed interface AppDetailState {
     ) : AppDetailState
 
     data object Initial : AppDetailState
-
-    data object Finished : AppDetailState
-
     data class Error(val message: String) : AppDetailState
-
-
 }
 
 sealed interface AppDetailCommand {
-    data class ShowSnackBar(@StringRes val resId: Int) : AppDetailCommand
     data class ToggleWishlist(val id: String) : AppDetailCommand
 
     data object Back : AppDetailCommand
@@ -168,4 +158,11 @@ sealed interface AppDetailCommand {
     data object DeveloperClick : AppDetailCommand
 
     data object ToggleDescription : AppDetailCommand
+}
+
+
+sealed interface AppDetailEvent {
+    data class ShowSnackBar(@StringRes val resId: Int) : AppDetailEvent
+
+    data object Finished : AppDetailEvent
 }

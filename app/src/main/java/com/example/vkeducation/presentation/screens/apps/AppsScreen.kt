@@ -68,8 +68,6 @@ fun AppsScreen(
     onAppClick: (AppShort) -> Unit,
     viewModel: AppsViewModel = hiltViewModel()
 ) {
-
-
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
@@ -81,16 +79,13 @@ fun AppsScreen(
         onRefresh = { viewModel.processCommand(AppsCommand.RefreshApps) }
     )
 
-
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
-                is AppsCommand.ShowSnackBar -> {
+                is AppsEvent.ShowSnackBar -> {
                     val message = currentContext.getString(event.message)
                     snackBarHostState.showSnackbar(message)
                 }
-
-                AppsCommand.RefreshApps -> {}
             }
         }
     }

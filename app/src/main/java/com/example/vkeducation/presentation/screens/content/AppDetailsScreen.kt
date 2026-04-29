@@ -61,7 +61,7 @@ fun AppDetailsScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                is AppDetailCommand.ShowSnackBar -> {
+                is AppDetailEvent.ShowSnackBar -> {
                     try {
                         val message = currentContext.getString(event.resId)
                         snackBarHostState.showSnackbar(message)
@@ -69,22 +69,13 @@ fun AppDetailsScreen(
                         snackBarHostState.showSnackbar("Unknown error $e")
                     }
                 }
-
-                AppDetailCommand.Back -> {
-                    onBackClick()
-                }
-
-                else -> {}
+                AppDetailEvent.Finished -> onBackClick()
             }
         }
     }
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) }) {
         when (val currentState = state) {
-            AppDetailState.Finished -> {
-                LaunchedEffect(Unit) { onBackClick() }
-            }
-
             AppDetailState.Initial -> {
                 Column(
                     modifier = modifier.fillMaxSize(),

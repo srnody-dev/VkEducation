@@ -1,6 +1,7 @@
 package com.example.vkeducation.presentation.screens.content
 
 import android.util.Log
+import android.util.Log.e
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

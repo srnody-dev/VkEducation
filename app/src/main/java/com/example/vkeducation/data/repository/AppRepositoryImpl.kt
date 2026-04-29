@@ -26,7 +26,7 @@ class AppRepositoryImpl @Inject constructor(
 
     companion object {
         private const val TAG = "AppRepository"
-        private const val CACHE = 5 * 60 * 1000
+        private const val EXPIRE_TIME = 5 * 60 * 1000
     }
 
     override fun getApps(): Flow<List<AppShort>> {

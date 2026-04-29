@@ -42,7 +42,7 @@ interface DataModule {
 
         @Provides
         @Singleton
-        fun providesNewsDao(database: AppsDatabase): AppsDao {
+        fun providesAppsDao(database: AppsDatabase): AppsDao {
             return database.appsDao()
         }
 

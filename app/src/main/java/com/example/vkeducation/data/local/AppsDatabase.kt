@@ -15,25 +15,6 @@ import androidx.room.TypeConverters
 
 @TypeConverters(Converters::class)
 abstract class AppsDatabase : RoomDatabase() {
-
     abstract fun appsDao(): AppsDao
-
-    companion object {
-        private var instance: AppsDatabase? = null
-        private val LOCK = Any()
-
-        fun getInstance(context: Context): AppsDatabase {
-            instance?.let { return it }
-            synchronized(LOCK) {
-                return Room.databaseBuilder(
-                    context = context,
-                    klass = AppsDatabase::class.java,
-                    name = "apps.db"
-                ).build().also {
-                    instance = it
-                }
-            }
-        }
-    }
 
 }
